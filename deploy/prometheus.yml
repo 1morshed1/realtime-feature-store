@@ -1,0 +1,13 @@
+# Prometheus scrape config for the feature store. Each service exposes /metrics; Prometheus
+# pulls them every few seconds so you can graph serving latency, freshness, cache hit rate,
+# and skew in the Prometheus UI at http://localhost:9090.
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: serving
+    static_configs:
+      - targets: ["serving:8082"]
+  - job_name: monitor
+    static_configs:
+      - targets: ["monitor:8084"]

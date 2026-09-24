@@ -102,7 +102,31 @@ deploy/       # docker-compose, prometheus config
 plan.md       # the original project brief
 ```
 
-## Project status
+## Services and endpoints (Docker stack)
 
-Built incrementally; see git history and [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) for a
-narrated walkthrough of how each layer was constructed and why.
+| Service | Port | Key endpoints |
+|---------|------|---------------|
+| `registry` | 8081 | `POST/GET /features`, `GET /features/{name}` |
+| `serving` | 8082 | `POST /getFeatures`, `GET /metrics`, `GET /healthz` |
+| `monitor` | 8084 | `GET /metrics`, `GET /healthz` |
+| `streamproc` | — | consumes the `raw-events` Kafka topic |
+| Prometheus | 9090 | scrapes `serving` and `monitor` |
+
+Example serving call (against the Docker stack):
+
+```bash
+curl -s localhost:8082/getFeatures -d '{
+  "entity":"user_id","entity_ids":["u1"],
+  "features":["txn_count_1h","txn_avg_7d","txn_total_24h"]}' | jq
+```
+
+## Project status — complete
+
+All seven components in [`plan.md`](plan.md) are implemented, unit-tested (race-clean), and
+runnable end to end. The fastest way to see it work is `make demo`, which runs the whole
+pipeline in one process and narrates each stage (registry → events → stream processing →
+serving with freshness → point-in-time training join → skew detection → metrics).
+
+See [`docs/README.md`](docs/README.md) for the guided reading path and
+[`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) for a narrated, phase-by-phase account of how each
+layer was built and why.

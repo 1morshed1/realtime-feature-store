@@ -158,4 +158,36 @@ Decisions: [ADR-0004](adr/0004-serving-protocol-rest-vs-grpc.md) keeps serving l
 transport-agnostic with REST/JSON now and gRPC as an additive production adapter. Full
 teaching write-up: [learning/06-serving-and-metrics.md](learning/06-serving-and-metrics.md).
 
-*(Later phases are appended below as they are built.)*
+## Phase 6 — Consistency monitor, production binaries, and the end-to-end demo
+
+**Goal:** close the loop (verify online and offline actually agree) and make the whole
+system runnable — both as one in-memory process and as a real Docker stack.
+
+`monitor.Checker` compares **actual** (online store) against a **reference** (batch
+recomputation — here the offline store as-of-now). Comparison rules that matter: numeric
+features use a **relative tolerance** (streaming/batch differ by tiny amounts legitimately;
+only larger drift is a bug), and a **presence mismatch** (one side has the feature, the
+other doesn't) is itself skew. Each disagreement becomes a `SkewReport` and bumps
+`skew_detected_total{feature}`.
+
+`cmd/demo` runs the entire flow in one process with in-memory adapters and narrates each
+stage: registry → events → stream processing → serving (with freshness) → point-in-time
+training join (showing NOW avg 171.4 vs as-of-day-3 avg 110, i.e. leakage avoided) → skew
+detection (healthy 0, then injected 1) → metrics. `make demo`.
+
+Production entrypoints wire the real adapters via env: `cmd/registry` (Postgres),
+`cmd/streamproc` (Kafka→Redis/offline), `cmd/serving` (Redis + registry SLAs), `cmd/monitor`
+(Redis vs offline). `Dockerfile` (static binaries on distroless) + `deploy/docker-compose.yml`
+(Kafka KRaft, Redis, Postgres, Prometheus + the four services) make `make up` bring the
+real stack online.
+
+Teaching write-up: [learning/07-consistency-and-skew.md](learning/07-consistency-and-skew.md).
+
+---
+
+## The finished system
+
+All seven components from `plan.md` are implemented, tested (`go test ./...`, race-clean),
+and runnable. The data flow the project set out to build — events → one computation →
+online+offline → serving + point-in-time training + skew detection — runs end to end. See
+[docs/README.md](README.md) for the guided reading path.
