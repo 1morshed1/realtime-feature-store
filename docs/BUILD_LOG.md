@@ -64,4 +64,27 @@ Key teaching points, written up in [learning/02-feature-registry.md](learning/02
 separating definitions from values, injected clocks for testable time, and keeping
 driver errors from leaking across the port boundary.
 
+## Phase 2 — Online store (low-latency serving)
+
+**Goal:** the fast key-value store holding the *current* value of every feature, on the
+inference critical path.
+
+Defined the `online.Store` port (`Set` / `Get` / `GetBatch`) and two adapters:
+
+- `MemoryStore` — nested maps mirroring the Redis model, mutex-guarded.
+- `RedisStore` — one Redis **hash per entity** (`fs:<entity>:<id>`), each field a
+  JSON-encoded `domain.Value` (payload + event_time, so a read returns freshness for
+  free). `GetBatch` uses a **pipeline** — N logical reads, one network round trip — which
+  is the key trick for surviving serving fan-out.
+
+Both adapters share one `StoreContract` test asserting the subtle guarantees: event_time
+survives the round trip, partial updates don't clobber, missing ids give empty vectors
+(not errors), batch order is preserved. A `//go:build integration` Redis test runs the
+same contract against real Redis. Added `TestMemoryConcurrent` (validated under
+`go test -race`).
+
+Teaching write-up: [learning/03-online-store.md](learning/03-online-store.md) — the
+online/offline dichotomy and why pipelining is the serving path's most important
+optimization.
+
 *(Later phases are appended below as they are built.)*
