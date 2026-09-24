@@ -87,4 +87,31 @@ Teaching write-up: [learning/03-online-store.md](learning/03-online-store.md) �
 online/offline dichotomy and why pipelining is the serving path's most important
 optimization.
 
+## Phase 3 — Stream processor (event-time windowed aggregations)
+
+**Goal:** turn raw events into features in real time, correctly, over event time.
+
+The core is `Aggregator` — pure, dependency-free windowing math. Each `FeatureSpec`
+declares a feature (event type, aggregation, window). For each event we update a
+per-(feature, entity) `window` that keeps samples **sorted by event time** and tracks a
+**watermark** (max event time = window's right edge). Aggregations: count, sum, avg, rate,
+last. Produced values are stamped with `EventTime = watermark`.
+
+Why keep raw samples rather than a running counter? Because a counter cannot evict or
+handle out-of-order events. Documented the production tradeoff (ring buffers/sketches,
+RocksDB-backed state) rather than hiding it.
+
+Ports: `EventSource` (KafkaSource / MemorySource) and `Sink` (satisfied by both stores).
+`Processor` consumes events and fans each computed value out to all sinks. The Kafka
+adapter uses consumer groups, partitions by entity (order guarantee), and manual offset
+commits for at-least-once processing; poison messages are skipped, not blocking.
+
+Tests assert the subtle properties by name: window slide, out-of-order insertion,
+per-entity isolation, event-type filtering, and a full source→aggregator→online-store
+pipeline. (One test initially double-counted by replaying events through a shared
+aggregator — a good illustration that aggregators are stateful; fixed with a feed-once
+helper.)
+
+Deep-dive: [learning/04-stream-processing-and-windows.md](learning/04-stream-processing-and-windows.md).
+
 *(Later phases are appended below as they are built.)*
