@@ -114,4 +114,27 @@ helper.)
 
 Deep-dive: [learning/04-stream-processing-and-windows.md](learning/04-stream-processing-and-windows.md).
 
+## Phase 4 — Offline store & point-in-time correctness
+
+**Goal:** the versioned history that makes leak-free training data possible — the crux of
+the whole project.
+
+Defined `offline.Store` with `Set` (append versioned history — same signature as the
+online Sink, but append not overwrite), `GetAsOf` (latest value with `event_time <= asOf`),
+and `PointInTimeJoin` (build a training matrix from labeled rows). Two adapters:
+
+- `MemoryOfflineStore` — per-(entity,feature) history kept sorted by event time; `GetAsOf`
+  is a binary search (`sort.Search`), O(log n).
+- `FileOfflineStore` — **date-partitioned JSONL** on disk, standing in for a Parquet lake
+  ([ADR-0003](adr/0003-offline-store-format.md)). Demonstrates **partition pruning** (skip
+  partitions newer than `asOf`) and a point-in-time scan on real files.
+
+The contract test encodes the safety property itself: a value before any history is
+invisible, and the point-in-time join fails loudly with `LEAKAGE:` if a future value ever
+bleeds into a past label. Both adapters pass it, so they agree on semantics.
+
+This is the concept most ML engineers get wrong; the write-up
+[learning/05-point-in-time-correctness.md](learning/05-point-in-time-correctness.md) walks
+through the data-leakage trap and the as-of fix in full.
+
 *(Later phases are appended below as they are built.)*
