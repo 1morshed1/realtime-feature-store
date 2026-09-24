@@ -39,4 +39,29 @@ Decisions recorded:
 Tooling: `Makefile` (test/vet/demo/up/down), `.gitignore`, module
 `github.com/1morshed1/realtime-feature-store`.
 
+## Phase 1 — Feature Registry
+
+**Goal:** the catalog — store and serve feature *definitions*, with a real Postgres
+adapter and an in-memory fake behind one interface.
+
+We defined the `Store` port (Create/Get/List/Update/Delete) and its `Service` (business
+logic: validation, timestamp stamping, invariants). Then two adapters:
+
+- `MemoryStore` — mutex-guarded map, deterministic sorted `List`.
+- `PostgresStore` — `database/sql` only; the driver (`pgx`) is registered in
+  `cmd/registry`, keeping the adapter driver-agnostic. It even detects unique violations
+  via an `errors.As` probe for `SQLState()`, and translates them to `ErrAlreadyExists` so
+  callers never see driver-specific errors.
+
+Both adapters are validated by one shared `StoreContract` test — the mechanism that keeps
+the fake honest against the real thing.
+
+The HTTP API uses the Go 1.22+ `net/http` router (method+path patterns), mapping domain
+errors to status codes (400/404/409). `cmd/registry` is the composition root that picks
+the adapter from `DATABASE_URL`.
+
+Key teaching points, written up in [learning/02-feature-registry.md](learning/02-feature-registry.md):
+separating definitions from values, injected clocks for testable time, and keeping
+driver errors from leaking across the port boundary.
+
 *(Later phases are appended below as they are built.)*
