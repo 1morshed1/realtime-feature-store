@@ -137,4 +137,25 @@ This is the concept most ML engineers get wrong; the write-up
 [learning/05-point-in-time-correctness.md](learning/05-point-in-time-correctness.md) walks
 through the data-leakage trap and the as-of fix in full.
 
+## Phase 5 — Serving API & observability
+
+**Goal:** the data-plane read API, plus the metrics that make the store operable.
+
+`serving.Service.GetFeatures` batches the online read (one pipelined round trip),
+annotates each value with **freshness** (`age = now − event_time`, `stale` if it exceeds
+the feature's SLA), records metrics, and logs exactly what it served. The service depends
+only on a narrow, self-defined `OnlineStore` port and is tested fully in-memory.
+
+`internal/metrics` wraps the four vital signs — serving latency (histogram), freshness
+(gauge per feature), cache hit/miss (counters), skew (counter) — each on a **private**
+`prometheus.Registry` so multiple services can run in one test binary without
+duplicate-registration panics.
+
+Feature logging (`FeatureLogger` + `MemoryLogger`) records served vectors for
+training-data reconstruction and live-traffic training sets.
+
+Decisions: [ADR-0004](adr/0004-serving-protocol-rest-vs-grpc.md) keeps serving logic
+transport-agnostic with REST/JSON now and gRPC as an additive production adapter. Full
+teaching write-up: [learning/06-serving-and-metrics.md](learning/06-serving-and-metrics.md).
+
 *(Later phases are appended below as they are built.)*
