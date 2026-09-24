@@ -1,0 +1,17 @@
+# Build artifacts
+/bin/
+*.exe
+*.out
+
+# Test / coverage
+coverage.out
+*.test
+
+# Local data written by the file-backed offline store during demos
+/data/
+*.parquet
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
