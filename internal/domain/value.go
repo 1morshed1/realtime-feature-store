@@ -7,7 +7,7 @@ import (
 
 // Value is a single feature value together with the timestamp that makes it meaningful.
 //
-// LEARNING NOTE — why a value carries a timestamp
+// DESIGN NOTE — why a value carries a timestamp
 // ------------------------------------------------
 // A naive feature store stores just the number: user:123 -> {avg_7d: 142.50}. That is
 // enough to *serve* a model, but it is NOT enough to do two critical things:

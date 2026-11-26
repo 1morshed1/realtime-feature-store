@@ -17,7 +17,7 @@ import (
 //	PUT    /features/{name}  update a feature
 //	DELETE /features/{name}  delete a feature
 //
-// LEARNING NOTE — why REST/JSON here but gRPC for serving?
+// DESIGN NOTE — why REST/JSON here but gRPC for serving?
 // --------------------------------------------------------
 // The registry is a low-traffic control-plane API used by humans and CI (registering
 // features, browsing the catalog). REST/JSON is the right ergonomic fit — curl-able,

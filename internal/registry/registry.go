@@ -2,7 +2,7 @@
 // *definitions* (not values). Think of it as the schema registry + documentation +
 // ownership database for every feature in the organization.
 //
-// LEARNING NOTE — why a registry is the beating heart of a feature store
+// DESIGN NOTE — why a registry is the beating heart of a feature store
 // ----------------------------------------------------------------------
 // Without a registry, features are "tribal knowledge": a SQL snippet in someone's
 // notebook, re-implemented slightly differently by the next team. The registry makes

@@ -187,7 +187,7 @@ Teaching write-up: [learning/07-consistency-and-skew.md](learning/07-consistency
 
 ## The finished system
 
-All seven components from `plan.md` are implemented, tested (`go test ./...`, race-clean),
+All seven components from the original spec are implemented, tested (`go test ./...`, race-clean),
 and runnable. The data flow the project set out to build — events → one computation →
 online+offline → serving + point-in-time training + skew detection — runs end to end. See
 [docs/README.md](README.md) for the guided reading path.

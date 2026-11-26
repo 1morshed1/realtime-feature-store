@@ -13,7 +13,7 @@ import (
 //	GET  /healthz
 //	GET  /metrics       Prometheus scrape endpoint
 //
-// LEARNING NOTE — why POST for a read?
+// DESIGN NOTE — why POST for a read?
 // ------------------------------------
 // A feature fetch is logically a read, but its inputs (a list of entity ids + a list of
 // feature names) don't fit cleanly or safely in a URL — they can be large and are

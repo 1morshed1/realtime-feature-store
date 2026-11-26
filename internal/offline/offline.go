@@ -1,7 +1,7 @@
 // Package offline is the OFFLINE feature store: the versioned history of every feature
 // value, used to build point-in-time-correct training datasets.
 //
-// LEARNING NOTE — the single most important idea in the whole project
+// DESIGN NOTE — the single most important idea in the whole project
 // ------------------------------------------------------------------
 // The online store answers "what is the value NOW?". The offline store answers "what was
 // the value AS OF some past moment?". That second question is what makes correct model

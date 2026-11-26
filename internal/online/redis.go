@@ -12,7 +12,7 @@ import (
 
 // RedisStore is the production online store, backed by Redis hashes.
 //
-// LEARNING NOTE — why Redis, and why a hash per entity
+// DESIGN NOTE — why Redis, and why a hash per entity
 // ----------------------------------------------------
 // Redis keeps everything in memory and speaks a simple protocol, so reads are typically
 // sub-millisecond — exactly what the inference critical path needs. We model each entity

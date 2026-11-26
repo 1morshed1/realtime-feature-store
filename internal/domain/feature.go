@@ -1,6 +1,6 @@
 // Package domain holds the core, dependency-free types of the feature store.
 //
-// LEARNING NOTE
+// DESIGN NOTE
 // -------------
 // This package is the "center" of a hexagonal (ports-and-adapters) architecture.
 // It contains ONLY business concepts — features, entities, feature values — and it

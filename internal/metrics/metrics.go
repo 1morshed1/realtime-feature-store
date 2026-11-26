@@ -1,6 +1,6 @@
 // Package metrics holds the Prometheus instrumentation for the feature store.
 //
-// LEARNING NOTE — what to measure in a feature store, and why
+// DESIGN NOTE — what to measure in a feature store, and why
 // ----------------------------------------------------------
 // You cannot operate infrastructure you cannot see. For a feature store the four vital
 // signs are:

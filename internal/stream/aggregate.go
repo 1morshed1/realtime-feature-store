@@ -43,7 +43,7 @@ type sample struct {
 
 // window holds the retained samples for one (feature, entity) pair.
 //
-// LEARNING NOTE — why we keep raw samples instead of just a running sum
+// DESIGN NOTE — why we keep raw samples instead of just a running sum
 // ---------------------------------------------------------------------
 // A running sum is O(1) but cannot handle two realities of streams:
 //   - out-of-order events (a late event must be inserted into the past), and

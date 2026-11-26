@@ -6,7 +6,7 @@ import "time"
 // a click, a login, a purchase. The stream processor consumes these and turns them into
 // features (running averages, counts, rates).
 //
-// LEARNING NOTE — event time vs processing time
+// DESIGN NOTE — event time vs processing time
 // ---------------------------------------------
 // EventTime is when the thing actually happened (set by the producer). We deliberately do
 // NOT trust "now" when computing windowed features, because events arrive late and out of

@@ -12,7 +12,7 @@ import (
 
 // PostgresStore is the production adapter for Store, backed by PostgreSQL.
 //
-// LEARNING NOTE — why Postgres for the registry (but Redis for values)?
+// DESIGN NOTE — why Postgres for the registry (but Redis for values)?
 // ---------------------------------------------------------------------
 // Feature *definitions* are low-volume, highly-relational, and must be durable and
 // queryable ("show me every feature the fraud team owns with an SLA under 5 minutes").

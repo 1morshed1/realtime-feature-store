@@ -13,7 +13,7 @@ import (
 // KafkaSource is the production EventSource: it consumes JSON-encoded domain.Event values
 // from a Kafka topic (the "raw-events" topic in the architecture diagram).
 //
-// LEARNING NOTE — consumer groups and at-least-once processing
+// DESIGN NOTE — consumer groups and at-least-once processing
 // ------------------------------------------------------------
 // We read via a consumer GROUP (GroupID). Kafka distributes the topic's partitions across
 // the members of a group, so you scale throughput by running more processor instances —

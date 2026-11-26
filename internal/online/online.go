@@ -2,7 +2,7 @@
 // the *current* value of every feature for every entity, optimized for reads at inference
 // time.
 //
-// LEARNING NOTE — the online store's job and its brutal latency budget
+// DESIGN NOTE — the online store's job and its brutal latency budget
 // --------------------------------------------------------------------
 // When a model scores a request (is this transaction fraud?), it needs the user's current
 // features in single-digit milliseconds, because that read sits on the critical path of a

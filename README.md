@@ -1,5 +1,8 @@
 # Real-Time ML Feature Store
 
+[![CI](https://github.com/1morshed1/realtime-feature-store/actions/workflows/ci.yml/badge.svg)](https://github.com/1morshed1/realtime-feature-store/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A production-shaped **feature store** built in Go, with Kafka (real-time feature
 computation), Redis (low-latency online serving), and a versioned offline store
 (point-in-time correct training data).
@@ -10,7 +13,7 @@ computation), Redis (low-latency online serving), and a versioned offline store
 > killer known as **train-serve skew**.
 
 This repository is also a **teaching project**. Nearly every file is heavily commented,
-and the [`docs/`](docs/) folder contains standalone learning notes and Architecture
+and the [`docs/`](docs/) folder contains standalone design notes and Architecture
 Decision Records (ADRs) explaining *why* each choice was made. If you are learning ML
 infrastructure, read the code top-to-bottom alongside [`docs/learning`](docs/learning).
 
@@ -99,7 +102,6 @@ docs/
   learning/   # standalone tutorials on the concepts
   adr/        # Architecture Decision Records — the "why" behind each choice
 deploy/       # docker-compose, prometheus config
-plan.md       # the original project brief
 ```
 
 ## Services and endpoints (Docker stack)
@@ -122,7 +124,7 @@ curl -s localhost:8082/getFeatures -d '{
 
 ## Project status — complete
 
-All seven components in [`plan.md`](plan.md) are implemented, unit-tested (race-clean), and
+All seven components in the original spec are implemented, unit-tested (race-clean), and
 runnable end to end. The fastest way to see it work is `make demo`, which runs the whole
 pipeline in one process and narrates each stage (registry → events → stream processing →
 serving with freshness → point-in-time training join → skew detection → metrics).
@@ -130,3 +132,7 @@ serving with freshness → point-in-time training join → skew detection → me
 See [`docs/README.md`](docs/README.md) for the guided reading path and
 [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) for a narrated, phase-by-phase account of how each
 layer was built and why.
+
+## License
+
+[MIT](LICENSE)
